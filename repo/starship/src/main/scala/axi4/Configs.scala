@@ -22,6 +22,13 @@ class StarshipAxi4DebugConfig extends Config(
   // new WithPeripherals ++
   new WithJtagDTM ++
   new WithClockGateModel() ++
+  new WithDefaultMMIOPort().alter((site,here,up) => {
+    case ExtBus => Some(MasterPortParams(
+                      base = x"3000_0000",
+                      size = x"5000_0000",
+                      beatBytes = site(MemoryBusKey).beatBytes,
+                      idBits = 4))
+  }) ++
   new StarshipBaseConfig().alter((site,here,up) => {
     case PeripheryBusKey => up(PeripheryBusKey, site).copy(dtsFrequency = Some(site(FrequencyKey).toInt * 1000000))
     /* timebase-frequency = 1 MHz */
